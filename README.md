@@ -1,17 +1,23 @@
-# job_tracker
+# Job Tracker
 
-A new Flutter project.
+A Flutter application for tracking job applications through the hiring pipeline.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Track applications with status pipeline (Applied → Interview → Offer / Rejected)
+- Add notes, salary, and job posting links per application
+- Filter and sort by status or date
+- Dashboard with application summary
+- Offline-first with local persistence
 
-A few resources to get you started if this is your first Flutter project:
+## Tech Stack
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter & Dart
+- Riverpod (state management)
+- MVVM architecture
+- sqflite (local storage)
+- GoRouter (navigation)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Status
+
+🚧 In progress
