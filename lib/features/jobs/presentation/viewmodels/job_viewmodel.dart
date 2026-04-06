@@ -42,8 +42,8 @@ class JobNotifier extends AsyncNotifier<List<Job>> {
     final updatedJob = job.copyWith(status: newStatus);
     await updateJob(updatedJob);
   }
-
-  final jobsProvider = AsyncNotifierProvider<JobNotifier, List<Job>>(
-    JobNotifier.new,
-  );
 }
+
+final jobsProvider = AsyncNotifierProvider<JobNotifier, List<Job>>(
+  JobNotifier.new,
+);
