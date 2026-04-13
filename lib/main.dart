@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:job_tracker/core/router/app_router.dart';
+import 'package:job_tracker/core/theme/app_theme.dart';
 
 void main() {
   runApp(const ProviderScope(child: MainApp()));
@@ -15,6 +16,7 @@ class MainApp extends StatelessWidget {
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
       title: 'Job Tracker',
+      theme: AppTheme.light,
     );
   }
 }

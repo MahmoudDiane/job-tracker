@@ -18,18 +18,18 @@ class StatusBadge extends StatelessWidget {
   }
 
   Color get _backgroundColor => switch (status) {
-    JobStatus.applied => Colors.blue.shade50,
-    JobStatus.interviewing => Colors.orange.shade50,
-    JobStatus.offer => Colors.green.shade50,
-    JobStatus.rejected => Colors.red.shade50,
-    JobStatus.withdrawn => Colors.grey.shade50,
-  };
+      JobStatus.applied => const Color(0xFFEEF2FF),
+      JobStatus.interviewing => const Color(0xFFFFF7ED),
+      JobStatus.offer => const Color(0xFFECFDF5),
+      JobStatus.rejected => const Color(0xFFFEF2F2),
+      JobStatus.withdrawn => const Color(0xFFF9FAFB),
+    };
 
-  Color get _textColor => switch (status) {
-    JobStatus.applied => Colors.blue.shade700,
-    JobStatus.interviewing => Colors.orange.shade700,
-    JobStatus.offer => Colors.green.shade700,
-    JobStatus.rejected => Colors.red.shade700,
-    JobStatus.withdrawn => Colors.grey.shade600,
-  };
+Color get _textColor => switch (status) {
+      JobStatus.applied => const Color(0xFF4338CA),
+      JobStatus.interviewing => const Color(0xFFC2410C),
+      JobStatus.offer => const Color(0xFF065F46),
+      JobStatus.rejected => const Color(0xFFB91C1C),
+      JobStatus.withdrawn => const Color(0xFF6B7280),
+    };
 }
