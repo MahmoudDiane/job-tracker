@@ -25,7 +25,7 @@ class JobListScreen extends ConsumerWidget {
               final job = jobs[index];
               return JobCard(
                 job: job,
-                onTap: () => context.go('/go/${job.id}', extra: job),
+                onTap: () => context.go('/job/${job.id}', extra: job),
               );
             },
             separatorBuilder: (_, __) => const SizedBox(height: 8),
