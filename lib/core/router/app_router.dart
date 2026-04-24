@@ -26,6 +26,13 @@ final appRouter = GoRouter(
       path: '/add',
       builder: (context, state) => AddJobScreen(),
     ),
+    GoRoute(
+      path: '/edit',
+      builder: (context, state) {
+        final job = state.extra as Job;
+        return AddJobScreen(job: job);
+      },
+    )
   ],
 );
 

@@ -6,7 +6,8 @@ import 'package:job_tracker/features/jobs/domain/job_status.dart';
 import 'package:job_tracker/features/jobs/presentation/viewmodels/job_viewmodel.dart';
 
 class AddJobScreen extends ConsumerStatefulWidget {
-  const AddJobScreen({super.key});
+  final Job? job;
+  const AddJobScreen({this.job, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AddJobScreenState();
@@ -14,15 +15,33 @@ class AddJobScreen extends ConsumerStatefulWidget {
 
 class _AddJobScreenState extends ConsumerState<AddJobScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _companyController = TextEditingController();
-  final _roleController = TextEditingController();
-  final _notesController = TextEditingController();
-  final _salaryController = TextEditingController();
-  final _jobUrlController = TextEditingController();
+  late final TextEditingController _companyController;
+  late final TextEditingController _roleController;
+  late final TextEditingController _notesController;
+  late final TextEditingController _salaryController;
+  late final TextEditingController _jobUrlController;
 
-  JobStatus _selectedStatus = JobStatus.applied;
-
+  late JobStatus _selectedStatus;
   bool _isLoading = false;
+
+  // Check if we're in edit mode
+  bool get _isEditing => widget.job != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _companyController =
+        TextEditingController(text: widget.job?.companyName ?? '');
+    _roleController =
+        TextEditingController(text: widget.job?.role ?? '');
+    _notesController =
+        TextEditingController(text: widget.job?.notes ?? '');
+    _salaryController =
+        TextEditingController(text: widget.job?.salary ?? '');
+    _jobUrlController =
+        TextEditingController(text: widget.job?.jobUrl ?? '');
+    _selectedStatus = widget.job?.status ?? JobStatus.applied;
+  }
 
   @override
   void dispose() {
@@ -36,38 +55,58 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
 
-    final job = Job(
-      companyName: _companyController.text.trim(),
-      role: _roleController.text.trim(),
-      status: _selectedStatus,
-      appliedAt: DateTime.now(),
-      notes: _notesController.text.trim().isEmpty
-          ? null
-          : _notesController.text.trim(),
-      salary: _salaryController.text.trim().isEmpty
-          ? null
-          : _salaryController.text.trim(),
-      jobUrl: _jobUrlController.text.trim().isEmpty
-          ? null
-          : _jobUrlController.text.trim(),
-    );
-
-    await ref.read(jobsProvider.notifier).addJob(job);
+    if (_isEditing) {
+      // Edit mode — update the existing job
+      final updatedJob = widget.job!.copyWith(
+        companyName: _companyController.text.trim(),
+        role: _roleController.text.trim(),
+        status: _selectedStatus,
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
+        salary: _salaryController.text.trim().isEmpty
+            ? null
+            : _salaryController.text.trim(),
+        jobUrl: _jobUrlController.text.trim().isEmpty
+            ? null
+            : _jobUrlController.text.trim(),
+      );
+      await ref.read(jobsProvider.notifier).updateJob(updatedJob);
+    } else {
+      // Add mode — insert a new job
+      final job = Job(
+        companyName: _companyController.text.trim(),
+        role: _roleController.text.trim(),
+        status: _selectedStatus,
+        appliedAt: DateTime.now(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
+        salary: _salaryController.text.trim().isEmpty
+            ? null
+            : _salaryController.text.trim(),
+        jobUrl: _jobUrlController.text.trim().isEmpty
+            ? null
+            : _jobUrlController.text.trim(),
+      );
+      await ref.read(jobsProvider.notifier).addJob(job);
+    }
 
     setState(() => _isLoading = false);
-
     if (mounted) context.go('/');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Application')),
+      appBar: AppBar(
+        // Title changes based on mode
+        title: Text(_isEditing ? 'Edit Application' : 'Add Application'),
+      ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -77,7 +116,6 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                 controller: _companyController,
                 decoration: const InputDecoration(
                   labelText: 'Company name *',
-                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -91,7 +129,6 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                 controller: _roleController,
                 decoration: const InputDecoration(
                   labelText: 'Role *',
-                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -102,10 +139,9 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<JobStatus>(
-                initialValue: _selectedStatus,
+                value: _selectedStatus,
                 decoration: const InputDecoration(
                   labelText: 'Status',
-                  border: OutlineInputBorder(),
                 ),
                 items: JobStatus.values.map((status) {
                   return DropdownMenuItem(
@@ -124,7 +160,6 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                 controller: _salaryController,
                 decoration: const InputDecoration(
                   labelText: 'Salary (optional)',
-                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -132,7 +167,6 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                 controller: _jobUrlController,
                 decoration: const InputDecoration(
                   labelText: 'Job posting URL (optional)',
-                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -140,7 +174,6 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                 controller: _notesController,
                 decoration: const InputDecoration(
                   labelText: 'Notes (optional)',
-                  border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
               ),
@@ -154,9 +187,12 @@ class _AddJobScreenState extends ConsumerState<AddJobScreen> {
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
-                    : const Text('Save Application'),
+                    : Text(_isEditing ? 'Save Changes' : 'Save Application'),
               ),
             ],
           ),

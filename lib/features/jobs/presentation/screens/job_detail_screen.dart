@@ -16,6 +16,10 @@ class JobDetailScreen extends ConsumerWidget {
         title: Text(job.companyName),
         actions: [
           IconButton(
+            onPressed: () => context.go('/edit', extra: job),
+            icon: const Icon(Icons.edit_outlined),
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline),
             onPressed: () => _confirmDelete(context, ref),
           ),
